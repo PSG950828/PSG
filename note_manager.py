@@ -1,6 +1,5 @@
 import os
 import argparse
-import textwrap
 
 NOTES_DIR = 'notes'
 
