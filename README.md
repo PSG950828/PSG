@@ -21,3 +21,6 @@ python note_manager.py delete <id>
 Each note is identified by an incrementing ID. The `add` command lets you
 type the note text in your terminal. To finish entering text, put a single
 period (`.`) on a new line.
+
+## Troubleshooting
+If you open `note_manager.py` inside VS Code and see errors about missing names or syntax near text like `diff --git`, you may have opened a patch file instead of the actual script. Open the file from the repository directly to avoid such false errors.
