@@ -5,8 +5,8 @@ Notes are stored in the `notes` directory as numbered text files.
 
 ## Usage
 
-You can run the script with Python and follow the interactive menu, or
-specify one of the following commands directly:
+Running the script without any arguments launches a small windowed
+interface built with Tkinter. You can also use command-line subcommands:
 
 ```
 python note_manager.py list
