@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import argparse
 
@@ -133,6 +134,37 @@ def main():
     del_p.add_argument('id', type=int)
 
     args = parser.parse_args()
+
+    if args.cmd is None:
+        # interactive menu when no subcommand is given
+        while True:
+            print("\n--- Note Manager ---")
+            print("1. List notes")
+            print("2. Add note")
+            print("3. View note")
+            print("4. Edit note")
+            print("5. Delete note")
+            print("0. Exit")
+            choice = input("Select an option: ").strip()
+            if choice == '1':
+                list_command()
+            elif choice == '2':
+                title = input("Title: ")
+                add_note(title)
+            elif choice == '3':
+                nid = int(input("Note ID: "))
+                view_note(nid)
+            elif choice == '4':
+                nid = int(input("Note ID: "))
+                edit_note(nid)
+            elif choice == '5':
+                nid = int(input("Note ID: "))
+                delete_note(nid)
+            elif choice == '0':
+                break
+            else:
+                print("Invalid selection.")
+        return
 
     if args.cmd == 'add':
         add_note(args.title)
