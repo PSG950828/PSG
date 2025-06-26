@@ -187,6 +187,28 @@ def run_gui():
 
         tk.Button(win, text='Save', command=save).pack()
 
+    def view_gui():
+        sel = listbox.curselection()
+        if not sel:
+            return
+        item = listbox.get(sel[0])
+        nid = int(item.split(':')[0])
+        path = note_path(nid)
+        if not path:
+            return
+        with open(path, 'r', encoding='utf-8') as f:
+            body = f.read()
+        title = os.path.basename(path)[path.find('_')+1:-4].replace('-', ' ')
+
+        win = tk.Toplevel(root)
+        win.title('View Note')
+        tk.Label(win, text=title).pack()
+        text = tk.Text(win, width=60, height=20)
+        text.insert('1.0', body)
+        text.config(state=tk.DISABLED)
+        text.pack()
+        tk.Button(win, text='Close', command=win.destroy).pack()
+
     def delete_gui():
         sel = listbox.curselection()
         if not sel:
@@ -197,6 +219,9 @@ def run_gui():
             delete_note(nid)
             refresh()
 
+    listbox.bind('<Double-Button-1>', lambda e: view_gui())
+
+    tk.Button(btn_frame, text='View', command=view_gui).pack(fill=tk.X)
     tk.Button(btn_frame, text='Add', command=add_gui).pack(fill=tk.X)
     tk.Button(btn_frame, text='Edit', command=edit_gui).pack(fill=tk.X)
     tk.Button(btn_frame, text='Delete', command=delete_gui).pack(fill=tk.X)

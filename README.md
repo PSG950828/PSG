@@ -6,7 +6,9 @@ Notes are stored in the `notes` directory as numbered text files.
 ## Usage
 
 Running the script without any arguments launches a small windowed
-interface built with Tkinter. You can also use command-line subcommands:
+interface built with Tkinter. The window lets you view, add, edit and
+delete notes. Double-click a note or use the **View** button to open it
+in a separate window. You can also use command-line subcommands:
 
 ```
 python note_manager.py list
