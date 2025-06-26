@@ -2,7 +2,7 @@
 import os
 import argparse
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 
 NOTES_DIR = 'notes'
 
@@ -119,23 +119,39 @@ def run_gui():
     root = tk.Tk()
     root.title('Note Manager')
 
-    listbox = tk.Listbox(root, width=40)
-    listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    style = ttk.Style(root)
+    try:
+        style.theme_use('clam')
+    except tk.TclError:
+        pass
 
-    btn_frame = tk.Frame(root)
-    btn_frame.pack(side=tk.RIGHT, fill=tk.Y)
+    frame = ttk.Frame(root, padding=10)
+    frame.pack(fill=tk.BOTH, expand=True)
+
+    tree = ttk.Treeview(frame, columns=('title',), show='headings', selectmode='browse', height=15)
+    tree.heading('title', text='Title')
+    vsb = ttk.Scrollbar(frame, orient='vertical', command=tree.yview)
+    tree.configure(yscrollcommand=vsb.set)
+    tree.grid(row=0, column=0, sticky='nsew')
+    vsb.grid(row=0, column=1, sticky='ns')
+
+    btn_frame = ttk.Frame(frame)
+    btn_frame.grid(row=0, column=2, sticky='nsw', padx=(10,0))
+
+    frame.columnconfigure(0, weight=1)
+    frame.rowconfigure(0, weight=1)
 
     def refresh():
-        listbox.delete(0, tk.END)
+        tree.delete(*tree.get_children())
         for nid, slug in list_notes():
-            listbox.insert(tk.END, f"{nid}: {slug.replace('-', ' ')}")
+            tree.insert('', 'end', iid=str(nid), values=(slug.replace('-', ' '),))
 
     def add_gui():
         win = tk.Toplevel(root)
         win.title('Add Note')
-        tk.Label(win, text='Title:').pack()
-        title_entry = tk.Entry(win, width=40)
-        title_entry.pack()
+        ttk.Label(win, text='Title:').pack(anchor='w')
+        title_entry = ttk.Entry(win, width=40)
+        title_entry.pack(fill=tk.X)
         text = tk.Text(win, width=60, height=20)
         text.pack()
 
@@ -147,14 +163,13 @@ def run_gui():
                 win.destroy()
                 refresh()
 
-        tk.Button(win, text='Save', command=save).pack()
+        ttk.Button(win, text='Save', command=save).pack(pady=4)
 
     def edit_gui():
-        sel = listbox.curselection()
+        sel = tree.selection()
         if not sel:
             return
-        item = listbox.get(sel[0])
-        nid = int(item.split(':')[0])
+        nid = int(sel[0])
         path = note_path(nid)
         if not path:
             return
@@ -164,10 +179,10 @@ def run_gui():
 
         win = tk.Toplevel(root)
         win.title('Edit Note')
-        tk.Label(win, text='Title:').pack()
-        title_entry = tk.Entry(win, width=40)
+        ttk.Label(win, text='Title:').pack(anchor='w')
+        title_entry = ttk.Entry(win, width=40)
         title_entry.insert(0, title)
-        title_entry.pack()
+        title_entry.pack(fill=tk.X)
         text = tk.Text(win, width=60, height=20)
         text.insert('1.0', body)
         text.pack()
@@ -185,14 +200,13 @@ def run_gui():
                 win.destroy()
                 refresh()
 
-        tk.Button(win, text='Save', command=save).pack()
+        ttk.Button(win, text='Save', command=save).pack(pady=4)
 
     def view_gui():
-        sel = listbox.curselection()
+        sel = tree.selection()
         if not sel:
             return
-        item = listbox.get(sel[0])
-        nid = int(item.split(':')[0])
+        nid = int(sel[0])
         path = note_path(nid)
         if not path:
             return
@@ -202,31 +216,29 @@ def run_gui():
 
         win = tk.Toplevel(root)
         win.title('View Note')
-        tk.Label(win, text=title).pack()
+        ttk.Label(win, text=title).pack(anchor='w')
         text = tk.Text(win, width=60, height=20)
         text.insert('1.0', body)
         text.config(state=tk.DISABLED)
         text.pack()
-        tk.Button(win, text='Close', command=win.destroy).pack()
+        ttk.Button(win, text='Close', command=win.destroy).pack(pady=4)
 
     def delete_gui():
-        sel = listbox.curselection()
+        sel = tree.selection()
         if not sel:
             return
-        item = listbox.get(sel[0])
-        nid = int(item.split(':')[0])
+        nid = int(sel[0])
         if messagebox.askyesno('Delete', 'Delete selected note?'):
             delete_note(nid)
             refresh()
 
-    listbox.bind('<Double-Button-1>', lambda e: view_gui())
-
-    tk.Button(btn_frame, text='View', command=view_gui).pack(fill=tk.X)
-    tk.Button(btn_frame, text='Add', command=add_gui).pack(fill=tk.X)
-    tk.Button(btn_frame, text='Edit', command=edit_gui).pack(fill=tk.X)
-    tk.Button(btn_frame, text='Delete', command=delete_gui).pack(fill=tk.X)
-    tk.Button(btn_frame, text='Refresh', command=refresh).pack(fill=tk.X)
-    tk.Button(btn_frame, text='Quit', command=root.destroy).pack(fill=tk.X)
+    tree.bind('<Double-Button-1>', lambda e: view_gui())
+    ttk.Button(btn_frame, text='View', command=view_gui).pack(fill=tk.X, pady=2)
+    ttk.Button(btn_frame, text='Add', command=add_gui).pack(fill=tk.X, pady=2)
+    ttk.Button(btn_frame, text='Edit', command=edit_gui).pack(fill=tk.X, pady=2)
+    ttk.Button(btn_frame, text='Delete', command=delete_gui).pack(fill=tk.X, pady=2)
+    ttk.Button(btn_frame, text='Refresh', command=refresh).pack(fill=tk.X, pady=2)
+    ttk.Button(btn_frame, text='Quit', command=root.destroy).pack(fill=tk.X, pady=2)
 
     refresh()
     root.mainloop()
