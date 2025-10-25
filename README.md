@@ -1,0 +1,27 @@
+# Note Manager
+
+This project provides a simple command-line tool for managing text notes.
+Notes are stored in the `notes` directory as numbered text files.
+
+## Usage
+
+Running the script without any arguments launches a small
+Tkinter-based window. Notes are listed in a table with buttons on the
+side for **View**, **Add**, **Edit**, **Delete**, and **Refresh**. You can
+double-click a note or use the **View** button to open it in a separate
+window. You can also use command-line subcommands:
+
+```
+python note_manager.py list
+python note_manager.py add "Note title"
+python note_manager.py view <id>
+python note_manager.py edit <id>
+python note_manager.py delete <id>
+```
+
+Each note is identified by an incrementing ID. The `add` command lets you
+type the note text in your terminal. To finish entering text, put a single
+period (`.`) on a new line.
+
+## Troubleshooting
+If you open `note_manager.py` inside VS Code and see errors about missing names or syntax near text like `diff --git`, you may have opened a patch file instead of the actual script. Open the file from the repository directly to avoid such false errors.
